@@ -80,11 +80,8 @@ router.post('/',(req,res) => {
 
 router.post('/:id/comments', (req,res) => {
     const id = req.params.id
-    if(!id) {
-        return res.status(400).json({ message: "The post with the specified ID does not exist."})
-    }
     const newComment = req.body; 
-    newComment.post_id = id
+    newComment.post_id = id;
     
     files.insertComment(newComment)
     .then(file => {
@@ -94,12 +91,32 @@ router.post('/:id/comments', (req,res) => {
         })
         .catch(err => {
             console.log(err)
-            res.status(500).json({error: "There was an error while finding the comment"})
-        })
+            res.status(400).json({ message: "The post with the specified ID does not exist."})
+        });
     })
     .catch(err => {
         console.log(err)
         res.status(500).json({error: "There was an error while saving the comment to the database"})
+    });
+});
+
+router.put('/:id',(req,res) => {
+    const id = req.params.id
+    if(!req.body.title || !req.body.contents){
+        return res.status(400).json({errorMessage: "Please provide title and contents for the post."})
+    }
+    const updatedPost = req.body
+    files.update(id, updatedPost)
+    .then(file => {
+        if(file){
+            res.status(200).json(updatedPost)
+        }else {
+            res.status(404).json({ message: "The post with the specified ID does not exist."  })
+        }
+    })
+    .catch(err => {
+        console.log(err)
+        res.status(500).json({error: "The post information could not be modified." })
     })
 })
 
