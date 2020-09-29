@@ -1,10 +1,10 @@
-const expresss = require('express')
+const express = require('express')
 
-const postRouter = require("./posts/post-router")
+const postRouter = require("./posts/post-router.js")
 
-const server = expresss();
+const server = express();
 
-server.use(expresss.json());
+server.use(express.json());
 
 server.use('/api/post', postRouter)
 
